@@ -1,4 +1,4 @@
-````markdown
+
 # IMPERIUM - AI-Powered Recommendation System
 
 IMPERIUM is a full-stack AI recommendation engine that provides personalized suggestions based on **hybrid recommendation logic** (Content-Based Filtering + Collaborative Filtering). It includes a FastAPI backend, React frontend admin panel, PostgreSQL database, and Redis caching.
@@ -11,7 +11,7 @@ IMPERIUM is a full-stack AI recommendation engine that provides personalized sug
 
 1. **Update FastAPI ports and CORS middleware** in `main.py`:
 
-```python
+````
 from fastapi.middleware.cors import CORSMiddleware
 
 app.add_middleware(
