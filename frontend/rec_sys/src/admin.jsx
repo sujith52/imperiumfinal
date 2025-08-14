@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect } from "react";
 import {
   LineChart,
   Line,
@@ -6,13 +6,19 @@ import {
   YAxis,
   Tooltip,
   CartesianGrid,
-  ResponsiveContainer
+  ResponsiveContainer,
 } from "recharts";
-import { Users, Database, Activity, AlertTriangle, TrendingUp, Play } from 'lucide-react';
+import {
+  Users,
+  Database,
+  Activity,
+  AlertTriangle,
+  TrendingUp,
+  Play,
+} from "lucide-react";
 import axios from "axios";
 import "./admin.css";
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
-
 
 const data = [
   { name: "Jan", value: 90 },
@@ -41,32 +47,39 @@ const Admin = () => {
   }, []);
 
   const handleRetrain = async () => {
-    try {
-      setIsRetraining(true);
-      setStatus("⏳ Retraining started...");
-      setOutput("");
+  try {
+    setIsRetraining(true);
+    setStatus("⏳ Retraining started...");
+    setOutput("");
 
-      const response = await axios.post(`${API_BASE_URL}/retrain`);
+    const response = await axios.post(`${API_BASE_URL}/retrain`);
 
-      setStatus(response.data.message || "✅ Training completed");
-      setOutput(
-        (response.data.output || "No output") +
-          (response.data.error ? `\nERRORS:\n${response.data.error}` : "")
-      );
-    } catch (error) {
-      let errorMsg = "❌ Network/Server Error";
-      if (error.response) {
-        errorMsg = `❌ ${error.response.data?.message || "Training failed"}`;
-        setOutput(JSON.stringify(error.response.data, null, 2));
-      }
-      setStatus(errorMsg);
-    } finally {
-      setIsRetraining(false);
+    setStatus(response.data.message || "✅ Training completed");
+    setOutput(
+      (response.data.output || "No output") +
+        (response.data.error ? `\nERRORS:\n${response.data.error}` : "")
+    );
+  } catch (error) {
+    let errorMsg = "❌ Network/Server Error";
+    if (error.response) {
+      errorMsg = `❌ ${error.response.data?.message || "Training failed"}`;
+      setOutput(JSON.stringify(error.response.data, null, 2));
     }
-  };
+    setStatus(errorMsg);
+  } finally {
+    setIsRetraining(false);
+  }
+ };
 
 
-  const MetricCard = ({ icon: Icon, title, value, subtitle, change, changeType }) => (
+  const MetricCard = ({
+    icon: Icon,
+    title,
+    value,
+    subtitle,
+    change,
+    changeType,
+  }) => (
     <div className="metric-card">
       <div className="metric-header">
         <div className="metric-icon">
@@ -74,7 +87,8 @@ const Admin = () => {
         </div>
         {change && (
           <span className={`metric-change ${changeType}`}>
-            {changeType === 'positive' ? '+' : ''}{change}%
+            {changeType === "positive" ? "+" : ""}
+            {change}%
           </span>
         )}
       </div>
@@ -99,14 +113,11 @@ const Admin = () => {
               <p className="header-subtitle">Real-time analytics & insights</p>
             </div>
           </div>
-          <div className="admin-badge">
-            Admin
-          </div>
+          <div className="admin-badge">Admin</div>
         </div>
       </div>
 
       <div className="dashboard-content">
-
         {/* ✅ Metrics From Backend */}
         <div className="metrics-grid">
           {metrics ? (
@@ -162,7 +173,7 @@ const Admin = () => {
               disabled={isRetraining}
             >
               <Play />
-              {isRetraining ? 'Training...' : 'Start Retraining'}
+              {isRetraining ? "Training..." : "Start Retraining"}
             </button>
           </div>
 
@@ -190,14 +201,17 @@ const Admin = () => {
             <ResponsiveContainer width="100%" height={300}>
               <LineChart data={data}>
                 <CartesianGrid stroke="#374151" strokeDasharray="3 3" />
-                <XAxis dataKey="name" tick={{ fill: '#9CA3AF', fontSize: 12 }} />
-                <YAxis tick={{ fill: '#9CA3AF', fontSize: 12 }} />
+                <XAxis
+                  dataKey="name"
+                  tick={{ fill: "#9CA3AF", fontSize: 12 }}
+                />
+                <YAxis tick={{ fill: "#9CA3AF", fontSize: 12 }} />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: '#1F2937',
-                    border: '1px solid #374151',
-                    borderRadius: '8px',
-                    color: '#F9FAFB'
+                    backgroundColor: "#1F2937",
+                    border: "1px solid #374151",
+                    borderRadius: "8px",
+                    color: "#F9FAFB",
                   }}
                 />
                 <Line
@@ -205,8 +219,8 @@ const Admin = () => {
                   dataKey="value"
                   stroke="#3B82F6"
                   strokeWidth={3}
-                  dot={{ fill: '#3B82F6', strokeWidth: 2, r: 4 }}
-                  activeDot={{ r: 6, fill: '#60A5FA' }}
+                  dot={{ fill: "#3B82F6", strokeWidth: 2, r: 4 }}
+                  activeDot={{ r: 6, fill: "#60A5FA" }}
                 />
               </LineChart>
             </ResponsiveContainer>
@@ -221,7 +235,10 @@ const Admin = () => {
                   <span className="performance-value">0.89</span>
                 </div>
                 <div className="progress-bar">
-                  <div className="progress-fill emerald" style={{ width: '89%' }}></div>
+                  <div
+                    className="progress-fill emerald"
+                    style={{ width: "89%" }}
+                  ></div>
                 </div>
               </div>
 
@@ -231,7 +248,10 @@ const Admin = () => {
                   <span className="performance-value">0.76</span>
                 </div>
                 <div className="progress-bar">
-                  <div className="progress-fill blue" style={{ width: '76%' }}></div>
+                  <div
+                    className="progress-fill blue"
+                    style={{ width: "76%" }}
+                  ></div>
                 </div>
               </div>
 
@@ -241,7 +261,10 @@ const Admin = () => {
                   <span className="performance-value">0.94</span>
                 </div>
                 <div className="progress-bar">
-                  <div className="progress-fill orange" style={{ width: '94%' }}></div>
+                  <div
+                    className="progress-fill orange"
+                    style={{ width: "94%" }}
+                  ></div>
                 </div>
               </div>
 
@@ -251,7 +274,10 @@ const Admin = () => {
                   <span className="performance-value">0.63</span>
                 </div>
                 <div className="progress-bar">
-                  <div className="progress-fill purple" style={{ width: '63%' }}></div>
+                  <div
+                    className="progress-fill purple"
+                    style={{ width: "63%" }}
+                  ></div>
                 </div>
               </div>
             </div>

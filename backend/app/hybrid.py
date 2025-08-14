@@ -8,8 +8,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 
 
-data = pd.read_csv(r'data/movies.csv', encoding='ISO-8859-1')
-data2 = pd.read_csv(r'data/Dataframe1.csv', encoding='ISO-8859-1')
+data = pd.read_csv(r'C:\Users\sujit\world\imperiumfinal\backend\app\data\movies.csv', encoding='ISO-8859-1')
+data2 = pd.read_csv(r'C:\Users\sujit\world\imperiumfinal\backend\app\data\Dataframe1.csv', encoding='ISO-8859-1')
 
 
 
@@ -18,7 +18,7 @@ data2['movieId'] = data2['movieId'].astype(str)
 data2['userId'] = data2['userId'].astype(str)
 
 
-algo = joblib.load('model2.pkl')
+algo = joblib.load(r'C:\Users\sujit\world\imperiumfinal\backend\app\model2.pkl')
 
 
 

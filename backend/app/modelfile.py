@@ -3,7 +3,7 @@ from surprise.model_selection import train_test_split
 import joblib
 import pandas as pd
 reader=Reader(rating_scale=(1,5))
-train_df=pd.read_csv('Dataframe1.csv')
+train_df=pd.read_csv(r'C:\Users\sujit\world\imperiumfinal\backend\app\data\Dataframe1.csv')
 train_df['userId'] = train_df['userId'].astype(str)
 train_df['movieId'] = train_df['movieId'].astype(str)
 
