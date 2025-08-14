@@ -7,8 +7,10 @@ import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-data = pd.read_csv(r'app/data/movies.csv',encoding='ISO-8859-1')
-data2 = pd.read_csv(r'app/data/Dataframe1.csv',encoding='ISO-8859-1')
+
+data = pd.read_csv(r'data/movies.csv', encoding='ISO-8859-1')
+data2 = pd.read_csv(r'data/Dataframe1.csv', encoding='ISO-8859-1')
+
 
 
 data['movieId'] = data['movieId'].astype(str) 
@@ -17,6 +19,7 @@ data2['userId'] = data2['userId'].astype(str)
 
 
 algo = joblib.load('model2.pkl')
+
 
 
 user_rated_movies = defaultdict(set)

@@ -11,6 +11,8 @@ import {
 import { Users, Database, Activity, AlertTriangle, TrendingUp, Play } from 'lucide-react';
 import axios from "axios";
 import "./admin.css";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 
 const data = [
   { name: "Jan", value: 90 },
@@ -29,7 +31,7 @@ const Admin = () => {
 
   useEffect(() => {
     axios
-      .get("https://8000-idx-reactapp-1733328043776.cluster-bec2e4635ng44w7ed22sa22hes.cloudworkstations.dev/admin/metrics/summary")
+      .get(`${API_BASE_URL}/admin/metrics/summary`)
       .then((res) => {
         setMetrics(res.data);
       })
@@ -43,16 +45,18 @@ const Admin = () => {
       setIsRetraining(true);
       setStatus("⏳ Retraining started...");
       setOutput("");
-      const response = await axios.post("https://8000-idx-reactapp-1733328043776.cluster-bec2e4635ng44w7ed22sa22hes.cloudworkstations.dev/retrain");
-      setStatus(response.data.message);
+
+      const response = await axios.post(`${API_BASE_URL}/retrain`);
+
+      setStatus(response.data.message || "✅ Training completed");
       setOutput(
         (response.data.output || "No output") +
-        (response.data.error ? `\nERRORS:\n${response.data.error}` : "")
+          (response.data.error ? `\nERRORS:\n${response.data.error}` : "")
       );
     } catch (error) {
       let errorMsg = "❌ Network/Server Error";
       if (error.response) {
-        errorMsg = `❌ ${error.response.data?.message || 'Training failed'}`;
+        errorMsg = `❌ ${error.response.data?.message || "Training failed"}`;
         setOutput(JSON.stringify(error.response.data, null, 2));
       }
       setStatus(errorMsg);
@@ -60,6 +64,7 @@ const Admin = () => {
       setIsRetraining(false);
     }
   };
+
 
   const MetricCard = ({ icon: Icon, title, value, subtitle, change, changeType }) => (
     <div className="metric-card">
