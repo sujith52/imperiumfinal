@@ -6,6 +6,10 @@ import Appy from "./components/Appy";
 import Row from "./components/Row";
 import Admin from "./admin";
 
+
+
+
+
 const recommendedMovies = [
   { id: 1, title: "Movie 1" },
   { id: 2, title: "Movie 2" },
@@ -42,7 +46,7 @@ function App() {
   }, []);
 
   return (
-    <div style={{ padding: "30px" }}>
+    <div className="main-app" style={{ padding: "30px" }}>
       <Appy selectedPage={selectedPage} onPageChange={setSelectedPage} />
       <main className="app-main">
         {selectedPage === "admin" ? (
