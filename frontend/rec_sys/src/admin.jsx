@@ -18,9 +18,11 @@ import {
 } from "lucide-react";
 import axios from "axios";
 import "./admin.css";
+
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
-const data = [
+// Dummy chart data (replace with backend API if available)
+const chartData = [
   { name: "Jan", value: 90 },
   { name: "Feb", value: 95 },
   { name: "Mar", value: 85 },
@@ -29,59 +31,61 @@ const data = [
   { name: "Jun", value: 90 },
 ];
 
-
-
 const Admin = () => {
   const [status, setStatus] = useState("");
   const [output, setOutput] = useState("");
   const [isRetraining, setIsRetraining] = useState(false);
   const [metrics, setMetrics] = useState(null);
+  const [error, setError] = useState("");
 
+  // Fetch metrics from backend (auto-refresh every 10s)
   useEffect(() => {
-    axios
-      .get(`${API_BASE_URL}/admin/metrics/summary`)
-      .then((res) => {
-        setMetrics(res.data);
-      })
-      .catch((err) => {
-        console.error("Error fetching metrics:", err);
-      });
+    const fetchMetrics = () => {
+      axios
+        .get(`${API_BASE_URL}/admin/metrics/summary`)
+        .then((res) => {
+          setMetrics(res.data);
+          setError("");
+        })
+        .catch((err) => {
+          console.error("Error fetching metrics:", err);
+          setError("Failed to load metrics");
+        });
+    };
+
+    fetchMetrics();
+    const interval = setInterval(fetchMetrics, 10000);
+    return () => clearInterval(interval);
   }, []);
 
+  // Handle retrain button click
   const handleRetrain = async () => {
-  try {
-    setIsRetraining(true);
-    setStatus("⏳ Retraining started...");
-    setOutput("");
+    try {
+      setIsRetraining(true);
+      setStatus("⏳ Retraining started...");
+      setOutput("");
 
-    const response = await axios.post(`${API_BASE_URL}/retrain`);
+      const response = await axios.post(`${API_BASE_URL}/retrain`);
 
-    setStatus(response.data.message || "✅ Training completed");
-    setOutput(
-      (response.data.output || "No output") +
-        (response.data.error ? `\nERRORS:\n${response.data.error}` : "")
-    );
-  } catch (error) {
-    let errorMsg = "❌ Network/Server Error";
-    if (error.response) {
-      errorMsg = `❌ ${error.response.data?.message || "Training failed"}`;
-      setOutput(JSON.stringify(error.response.data, null, 2));
+      setStatus(response.data.message || "✅ Training completed");
+      setOutput(
+        (response.data.output || "No output") +
+          (response.data.error ? `\nERRORS:\n${response.data.error}` : "")
+      );
+    } catch (error) {
+      let errorMsg = "❌ Network/Server Error";
+      if (error.response) {
+        errorMsg = `❌ ${error.response.data?.message || "Training failed"}`;
+        setOutput(JSON.stringify(error.response.data, null, 2));
+      }
+      setStatus(errorMsg);
+    } finally {
+      setIsRetraining(false);
     }
-    setStatus(errorMsg);
-  } finally {
-    setIsRetraining(false);
-  }
- };
+  };
 
-
-  const MetricCard = ({
-    icon: Icon,
-    title,
-    value,
-    subtitle,
-    change,
-    changeType,
-  }) => (
+  // Metric card component
+  const MetricCard = ({ icon: Icon, title, value, subtitle, change, changeType }) => (
     <div className="metric-card">
       <div className="metric-header">
         <div className="metric-icon">
@@ -104,6 +108,7 @@ const Admin = () => {
 
   return (
     <div className="admin-dashboard">
+      {/* Header */}
       <div className="dashboard-header">
         <div className="header-content">
           <div className="header-title">
@@ -120,9 +125,11 @@ const Admin = () => {
       </div>
 
       <div className="dashboard-content">
-        {/* ✅ Metrics From Backend */}
+        {/* Metrics */}
         <div className="metrics-grid">
-          {metrics ? (
+          {error ? (
+            <p className="error-text">{error}</p>
+          ) : metrics ? (
             <>
               <MetricCard
                 icon={Users}
@@ -195,18 +202,16 @@ const Admin = () => {
 
         {/* Charts & Performance */}
         <div className="chart-metrics-grid">
+          {/* CTR Score Chart */}
           <div className="chart-container">
             <div className="chart-header">
               <TrendingUp />
               <h3 className="chart-title">CTR Score Over Time</h3>
             </div>
             <ResponsiveContainer width="100%" height={300}>
-              <LineChart data={data}>
+              <LineChart data={chartData}>
                 <CartesianGrid stroke="#374151" strokeDasharray="3 3" />
-                <XAxis
-                  dataKey="name"
-                  tick={{ fill: "#9CA3AF", fontSize: 12 }}
-                />
+                <XAxis dataKey="name" tick={{ fill: "#9CA3AF", fontSize: 12 }} />
                 <YAxis tick={{ fill: "#9CA3AF", fontSize: 12 }} />
                 <Tooltip
                   contentStyle={{
@@ -228,18 +233,21 @@ const Admin = () => {
             </ResponsiveContainer>
           </div>
 
+          {/* Performance Metrics */}
           <div className="performance-metrics">
             <h3 className="performance-title">Performance Metrics</h3>
             <div className="performance-list">
               <div className="performance-item">
                 <div className="performance-header">
                   <span className="performance-label">Precision@K</span>
-                  <span className="performance-value">0.89</span>
+                  <span className="performance-value">
+                    {metrics?.precision_at_k ?? "N/A"}
+                  </span>
                 </div>
                 <div className="progress-bar">
                   <div
                     className="progress-fill emerald"
-                    style={{ width: "89%" }}
+                    style={{ width: `${(metrics?.precision_at_k || 0) * 100}%` }}
                   ></div>
                 </div>
               </div>
@@ -247,12 +255,14 @@ const Admin = () => {
               <div className="performance-item">
                 <div className="performance-header">
                   <span className="performance-label">Recall@K</span>
-                  <span className="performance-value">0.76</span>
+                  <span className="performance-value">
+                    {metrics?.recall_at_k ?? "N/A"}
+                  </span>
                 </div>
                 <div className="progress-bar">
                   <div
                     className="progress-fill blue"
-                    style={{ width: "76%" }}
+                    style={{ width: `${(metrics?.recall_at_k || 0) * 100}%` }}
                   ></div>
                 </div>
               </div>
@@ -260,12 +270,14 @@ const Admin = () => {
               <div className="performance-item">
                 <div className="performance-header">
                   <span className="performance-label">RMSE</span>
-                  <span className="performance-value">0.94</span>
+                  <span className="performance-value">
+                    {metrics?.rmse ?? "N/A"}
+                  </span>
                 </div>
                 <div className="progress-bar">
                   <div
                     className="progress-fill orange"
-                    style={{ width: "94%" }}
+                    style={{ width: `${(metrics?.rmse || 0) * 100}%` }}
                   ></div>
                 </div>
               </div>
@@ -273,12 +285,14 @@ const Admin = () => {
               <div className="performance-item">
                 <div className="performance-header">
                   <span className="performance-label">MAE</span>
-                  <span className="performance-value">0.63</span>
+                  <span className="performance-value">
+                    {metrics?.mae ?? "N/A"}
+                  </span>
                 </div>
                 <div className="progress-bar">
                   <div
                     className="progress-fill purple"
-                    style={{ width: "63%" }}
+                    style={{ width: `${(metrics?.mae || 0) * 100}%` }}
                   ></div>
                 </div>
               </div>
