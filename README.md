@@ -3,6 +3,9 @@
 
 IMPERIUM is a full-stack AI recommendation engine that provides personalized suggestions based on **hybrid recommendation logic** (Content-Based Filtering + Collaborative Filtering). It includes a FastAPI backend, React frontend admin panel, PostgreSQL database, and Redis caching.
 
+## Contributors
+- Dipika — frontend implementation (React, UI, client-side integration) — [Repo](https://github.com/Dinpikha/Recommendation-System) — [@Dinpikha](https://github.com/Dinpikha)
+- Sujith — backend development (FastAPI), database design & creation, API integration, deployment — [@sujith52](https://github.com/sujith52)
 ---
 
 ## Setup Instructions
